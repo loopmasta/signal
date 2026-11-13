@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
-"""Control the pulse script on a norns over the network (OSC over UDP, no dependencies).
+"""Control the signal script on a norns over the network (OSC over UDP, no dependencies).
 
-The norns address: -H <host> as the first arguments, else $PULSE_HOST, else norns.local.
+The norns address: -H <host> as the first arguments, else $SIGNAL_HOST, else norns.local.
 Without -H the first word below is the command, not the host.
 
-  pulse_ctl.py -H 192.168.1.50 on
-  pulse_ctl.py norns.local on
-  pulse_ctl.py norns.local hz 1750
-  pulse_ctl.py norns.local level -20
-  pulse_ctl.py norns.local wave square
-  pulse_ctl.py norns.local sweep up 300 3000 5
-  pulse_ctl.py norns.local burst 500
-  pulse_ctl.py norns.local get          # prints the state
-  pulse_ctl.py norns.local raw /pulse/hz2 f 2200
+  signal_ctl.py -H 192.168.1.50 on
+  signal_ctl.py norns.local on
+  signal_ctl.py norns.local hz 1750
+  signal_ctl.py norns.local level -20
+  signal_ctl.py norns.local wave square
+  signal_ctl.py norns.local sweep up 300 3000 5
+  signal_ctl.py norns.local burst 500
+  signal_ctl.py norns.local get          # prints the state
+  signal_ctl.py norns.local raw /signal/hz2 f 2200
 
 Several commands in one go: separate them with a lone "+":
-  pulse_ctl.py norns.local wave sine + hz 1000 + level -20 + on
+  signal_ctl.py norns.local wave sine + hz 1000 + level -20 + on
 """
 import os
 import socket
@@ -85,8 +85,8 @@ def main():
         return 0 if argv else 1
     if argv[0] == "-H" and len(argv) >= 3:
         host, rest = argv[1], argv[2:]
-    elif os.environ.get("PULSE_HOST"):
-        host, rest = os.environ["PULSE_HOST"], argv
+    elif os.environ.get("SIGNAL_HOST"):
+        host, rest = os.environ["SIGNAL_HOST"], argv
     else:
         host, rest = argv[0], argv[1:]
 
@@ -112,7 +112,7 @@ def main():
                 vals.append(int(v) if t == "i" else float(v) if t == "f" else v)
             packet = encode(path, vals)
         else:
-            packet = encode("/pulse/" + name, args)
+            packet = encode("/signal/" + name, args)
         if name == "get":
             sock.bind(("", REPLY_PORT))
             sock.settimeout(2)
@@ -125,7 +125,7 @@ def main():
             try:
                 data, _ = sock.recvfrom(2048)
             except socket.timeout:
-                print("no answer (is pulse running? is port %d free?)" % REPLY_PORT,
+                print("no answer (is signal running? is port %d free?)" % REPLY_PORT,
                       file=sys.stderr)
                 return 1
             _, vals = decode(data)

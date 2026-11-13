@@ -1,10 +1,10 @@
-// Engine_Pulse: a simple lab signal generator for norns.
+// Engine_Signal: a simple lab signal generator for norns.
 // sine / triangle / square / saw / white noise, optional second tone,
 // log frequency sweep (up, down, up-down) with a poll for its position,
 // one-shot tone burst, L / R / both output. The output signal itself, one cycle of the
-// first tone in 62 samples, goes to the script as OSC /pulse_scope 15 times a second.
+// first tone in 62 samples, goes to the script as OSC /signal_scope 15 times a second.
 
-Engine_Pulse : CroneEngine {
+Engine_Signal : CroneEngine {
 	var synth, posBus, scopeBuf, scopeAddr, scopeTask;
 
 	*new { arg context, doneCallback;
@@ -12,7 +12,7 @@ Engine_Pulse : CroneEngine {
 	}
 
 	alloc {
-		SynthDef(\pulse, {
+		SynthDef(\signal, {
 			arg out = 0,
 				wave = 0, hz = 1000, hz2 = 2000, tone2 = 0,
 				amp = 0.03, on = 0, chan = 0,
@@ -76,7 +76,7 @@ Engine_Pulse : CroneEngine {
 		scopeBuf = Buffer.alloc(context.server, 62, 1);
 		context.server.sync;
 
-		synth = Synth.new(\pulse, [
+		synth = Synth.new(\signal, [
 			\out, context.out_b.index,
 			\posbus, posBus.index,
 			\scopebuf, scopeBuf.bufnum
@@ -87,7 +87,7 @@ Engine_Pulse : CroneEngine {
 		scopeAddr = NetAddr("127.0.0.1", 10111);
 		scopeTask = Routine({
 			loop {
-				scopeBuf.getn(0, 62, { arg data; scopeAddr.sendMsg('/pulse_scope', *data) });
+				scopeBuf.getn(0, 62, { arg data; scopeAddr.sendMsg('/signal_scope', *data) });
 				(1 / 15).wait;
 			}
 		}).play(SystemClock);

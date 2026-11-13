@@ -32,7 +32,7 @@ def load(name):
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--norns", default=os.environ.get("PULSE_HOST"))
+    ap.add_argument("--norns", default=os.environ.get("SIGNAL_HOST"))
     ap.add_argument("--scope", default=os.environ.get("SCOPE_HOST"))
     ap.add_argument("--out", type=int, required=True, help="scope channel after the filter")
     ap.add_argument("--in", dest="inp", type=int, help="scope channel before the filter")
@@ -44,9 +44,9 @@ def main():
     ap.add_argument("--csv", help="also write the table to this file")
     a = ap.parse_args()
     if not a.norns or not a.scope:
-        ap.error("--norns and --scope (or $PULSE_HOST / $SCOPE_HOST) are needed")
+        ap.error("--norns and --scope (or $SIGNAL_HOST / $SCOPE_HOST) are needed")
 
-    ctl = load("pulse_ctl")
+    ctl = load("signal_ctl")
     try:
         sc = load("scope").Scope(a.scope)
     except OSError as e:
@@ -60,12 +60,12 @@ def main():
     freqs = [a.lo * (a.hi / a.lo) ** (i / max(a.points - 1, 1)) for i in range(a.points)]
     rows = []
     try:
-        send("/pulse/wave", "sine")
-        send("/pulse/tone2", 0)
-        send("/pulse/sweep", "off")
-        send("/pulse/level", float(a.level))
-        send("/pulse/hz", float(freqs[0]))
-        send("/pulse/on", 1)
+        send("/signal/wave", "sine")
+        send("/signal/tone2", 0)
+        send("/signal/sweep", "off")
+        send("/signal/level", float(a.level))
+        send("/signal/hz", float(freqs[0]))
+        send("/signal/on", 1)
         print("scope: %s" % sc.idn)
         info = {}
         for ch in filter(None, (a.inp, a.out)):
@@ -76,7 +76,7 @@ def main():
         print("the probe switch (1x / 10x) must match the scope's probe ratio above")
         print("%9s %10s %10s %10s" % ("Hz", "out Vpp", "in Vpp", "gain dB"))
         for f in freqs:
-            send("/pulse/hz", float(round(f, 1)))
+            send("/signal/hz", float(round(f, 1)))
             time.sleep(a.settle)
             vout = sc.measure("vpp", a.out)
             vin = sc.measure("vpp", a.inp) if a.inp else None
@@ -95,7 +95,7 @@ def main():
             print("%9.1f %10s %10s %10s" % (f, fmt(vout, "%.4f"), fmt(vin, "%.4f"),
                                             fmt(gain, "%+.2f")))
     finally:
-        send("/pulse/on", 0)
+        send("/signal/on", 0)
         sc.close()
 
     if a.csv:

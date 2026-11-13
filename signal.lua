@@ -1,6 +1,6 @@
--- pulse v0.0.1 by loopmasta
+-- signal v0.0.1 by loopmasta
 
-engine.name = 'Pulse'
+engine.name = 'Signal'
 
 local cs = require 'controlspec'
 
@@ -11,7 +11,7 @@ local VISIBLE = 3 -- the parameters in view at the bottom
 -- frequencies worth a jump: voice band, 1200 / 2200 AFSK (APRS), the 1750 Hz
 -- repeater burst
 local PRESETS = {100, 300, 400, 1000, 1200, 1750, 2200, 3000, 5000}
-local REPLY_PORT = 9000  -- where /pulse/get answers go (on the sender's address)
+local REPLY_PORT = 9000  -- where /signal/get answers go (on the sender's address)
 
 -- the parameters, in scroll order: id, label, kind (option, hz, db, ms, sec). A parameter
 -- is a label with its value under it; VISIBLE of them are on the screen at a time
@@ -141,13 +141,13 @@ local function state_args()
 end
 
 -- OSC (norns listens on port 10111):
---   /pulse/on 0|1            /pulse/toggle
---   /pulse/wave sine|...     /pulse/hz 1000          /pulse/level -20 (dB)
---   /pulse/amp 0.1 (linear)
---   /pulse/tone2 0|1         /pulse/hz2 2000
---   /pulse/sweep off|up|down|up-down [from to seconds]
---   /pulse/restart 0|1 (retrigger the sweep with every start)  /pulse/retrigger (now)
---   /pulse/burst [ms]        /pulse/get  (answers /pulse/state to port 9000)
+--   /signal/on 0|1            /signal/toggle
+--   /signal/wave sine|...     /signal/hz 1000          /signal/level -20 (dB)
+--   /signal/amp 0.1 (linear)
+--   /signal/tone2 0|1         /signal/hz2 2000
+--   /signal/sweep off|up|down|up-down [from to seconds]
+--   /signal/restart 0|1 (retrigger the sweep with every start)  /signal/retrigger (now)
+--   /signal/burst [ms]        /signal/get  (answers /signal/state to port 9000)
 local NUMERIC = {
   hz = "hz", hz2 = "hz2", level = "level", burst_ms = "burst_ms",
   from = "sweep_lo", to = "sweep_hi", time = "sweep_time",
@@ -155,12 +155,12 @@ local NUMERIC = {
 
 local function osc_event(path, args, from)
   -- the output signal, from the engine: not a command
-  if path == "/pulse_scope" then
+  if path == "/signal_scope" then
     scope = args
     dirty = true
     return
   end
-  local cmd = path:match("^/pulse/(.+)$")
+  local cmd = path:match("^/signal/(.+)$")
   if not cmd then return end
   local a = args or {}
   if NUMERIC[cmd] then
@@ -194,14 +194,14 @@ local function osc_event(path, args, from)
     fire_burst()
   elseif cmd == "get" then
     if from and from[1] then
-      osc.send({from[1], REPLY_PORT}, "/pulse/state", state_args())
+      osc.send({from[1], REPLY_PORT}, "/signal/state", state_args())
     end
   end
   dirty = true
 end
 
 function init()
-  params:add_separator("PULSE")
+  params:add_separator("SIGNAL")
   params:add_binary("on", "output", "toggle", 0)
   params:set_action("on", function(v)
     engine.on(v)

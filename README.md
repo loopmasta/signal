@@ -1,6 +1,6 @@
-# pulse
+# signal
 
-![pulse](pulse.png)
+![signal](signal.png)
 
 a signal generator build for [monome norns](https://monome.org/docs/norns/). If you need a test tone right now and don't have a function generator, and you have a norns, this turns it into one: sine, triangle, square, saw and white noise from 20 Hz to 20 kHz, two tones at once, a frequency sweep and a tone burst, set from the norns itself or from your computer over the network.
 
@@ -12,14 +12,14 @@ a signal generator build for [monome norns](https://monome.org/docs/norns/). If 
 
 ## install
 
-copy this folder to `~/dust/code/pulse` on the norns, so that `pulse.lua` and `lib/Engine_Pulse.sc` are there. You can do that with maiden (the norns's web editor, at `http://norns.local`) or with `scp` / SFTP. Then restart the norns once (a new engine is only found at start-up) and pick `pulse` from the script list.
+copy this folder to `~/dust/code/signal` on the norns, so that `signal.lua` and `lib/Engine_Signal.sc` are there. You can do that with maiden (the norns's web editor, at `http://norns.local`) or with `scp` / SFTP. Then restart the norns once (a new engine is only found at start-up) and pick `signal` from the script list.
 
 `select.png` is a background for the SELECT preview. Stock norns doesn't show it (it needs a small patch to the norns preview menu, see [shieldXL-trixie](https://github.com/loopmasta/shieldXL-trixie)), so it's optional.
 
 ## quick start
 
 1. connect the norns output to what you want to test, **and to a scope or meter if you have one**. Read "connecting it" below first.
-2. start `pulse`. It starts with the output **off** and the level at -30 dB, so nothing happens yet.
+2. start `signal`. It starts with the output **off** and the level at -30 dB, so nothing happens yet.
 3. turn E2 to FREQ and E3 to set the frequency. E2 to LEVEL, E3 to set the level.
 4. press K3: the tone plays. The little square in the bottom right corner shows that a sound is playing. Press K3 again to stop.
 
@@ -69,32 +69,32 @@ the settings are saved and come back at the next start, except the output, which
 
 ## control it from your computer
 
-norns listens for OSC on UDP port 10111, so any OSC tool can control it (TouchOSC, Max, python-osc, `oscsend`). For a computer with Python 3, `tools/pulse_ctl.py` does it without installing anything:
+norns listens for OSC on UDP port 10111, so any OSC tool can control it (TouchOSC, Max, python-osc, `oscsend`). For a computer with Python 3, `tools/signal_ctl.py` does it without installing anything:
 
 ```
-tools/pulse_ctl.py -H norns.local wave sine + hz 1000 + level -20 + on
-tools/pulse_ctl.py -H norns.local sweep up 300 3000 5
-tools/pulse_ctl.py -H norns.local burst 500
-tools/pulse_ctl.py -H norns.local on 0
-tools/pulse_ctl.py -H norns.local get
+tools/signal_ctl.py -H norns.local wave sine + hz 1000 + level -20 + on
+tools/signal_ctl.py -H norns.local sweep up 300 3000 5
+tools/signal_ctl.py -H norns.local burst 500
+tools/signal_ctl.py -H norns.local on 0
+tools/signal_ctl.py -H norns.local get
 ```
 
 use the norns's IP address instead of `norns.local` if the name doesn't resolve. `on` alone means on, `on 0` means off. `get` prints the current settings (the answer comes back on UDP port 9000, so that port has to be free on your computer).
 
 | path | arguments |
 |---|---|
-| `/pulse/on` | 0 or 1 (no argument: on) |
-| `/pulse/toggle` | |
-| `/pulse/wave` | `sine` `triangle` `square` `saw` `white` (or 1-5) |
-| `/pulse/hz`, `/pulse/hz2` | Hz, 20-20000 |
-| `/pulse/level` | dBFS, -80 to 0 |
-| `/pulse/amp` | linear, 0-1 |
-| `/pulse/tone2` | 0 or 1 |
-| `/pulse/sweep` | `off` `up` `down` `up-down`, optionally followed by from and to (Hz) and time (s) |
-| `/pulse/restart` | 0 or 1: the RETRIG setting |
-| `/pulse/retrigger` | start the sweep from its beginning now |
-| `/pulse/burst` | optional length in ms |
-| `/pulse/get` | answers `/pulse/state` to the sender's address, on port 9000 |
+| `/signal/on` | 0 or 1 (no argument: on) |
+| `/signal/toggle` | |
+| `/signal/wave` | `sine` `triangle` `square` `saw` `white` (or 1-5) |
+| `/signal/hz`, `/signal/hz2` | Hz, 20-20000 |
+| `/signal/level` | dBFS, -80 to 0 |
+| `/signal/amp` | linear, 0-1 |
+| `/signal/tone2` | 0 or 1 |
+| `/signal/sweep` | `off` `up` `down` `up-down`, optionally followed by from and to (Hz) and time (s) |
+| `/signal/restart` | 0 or 1: the RETRIG setting |
+| `/signal/retrigger` | start the sweep from its beginning now |
+| `/signal/burst` | optional length in ms |
+| `/signal/get` | answers `/signal/state` to the sender's address, on port 9000 |
 
 ## measuring the result with a network oscilloscope
 
@@ -121,7 +121,7 @@ a norns is an audio device, not a lab generator. Know the limits before you trus
 norns's line outputs can be far too hot for many inputs, and a mistake can damage the device you connect. **Measure first, connect after.**
 
 - **Calibrate:** with the output on at 1 kHz and a scope on the norns output (not yet connected to anything else), note the Vpp at the level you use. Level is in dBFS, so -20 dB is a tenth of full scale, -40 dB a hundredth. Calibrate once, then use the levels you need.
-- **Start low:** pulse starts at -30 dB with the output off. Raise the level in small steps, with the scope connected.
+- **Start low:** signal starts at -30 dB with the output off. Raise the level in small steps, with the scope connected.
 - **Sensitive inputs:** for inputs that take a small signal (a microphone input, or a pin with a limited voltage range), use a resistor divider, not just a low level, so a wrong key press can't reach the input. Feed inputs with a DC bias through a capacitor.
 - **Ground:** join the norns's audio ground to the ground of what you test (and the scope's), or the level readings are meaningless.
 - **Never into an antenna:** if what you test can transmit, use a dummy load.
