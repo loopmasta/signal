@@ -2,7 +2,7 @@
 
 ![pulse](pulse.png)
 
-a signal generator made from a [monome norns](https://monome.org/docs/norns/). If you need a test tone right now and don't have a function generator, and you have a norns, this turns it into one: sine, triangle, square, saw and white noise from 20 Hz to 20 kHz, two tones at once, a frequency sweep and a tone burst, set from the norns itself or from your computer over the network.
+a signal generator build for [monome norns](https://monome.org/docs/norns/). If you need a test tone right now and don't have a function generator, and you have a norns, this turns it into one: sine, triangle, square, saw and white noise from 20 Hz to 20 kHz, two tones at once, a frequency sweep and a tone burst, set from the norns itself or from your computer over the network.
 
 ## what you need
 
