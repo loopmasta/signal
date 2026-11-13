@@ -128,4 +128,3 @@ norns's line outputs can be far too hot for many inputs, and a mistake can damag
 - **Start low:** signal starts at -30 dB with the output off. Raise the level in small steps, with the scope connected.
 - **Sensitive inputs:** for inputs that take a small signal (a microphone input, or a pin with a limited voltage range), use a resistor divider, not just a low level, so a wrong key press can't reach the input. Feed inputs with a DC bias through a capacitor.
 - **Ground:** join the norns's audio ground to the ground of what you test (and the scope's), or the level readings are meaningless.
-- **Never into an antenna:** if what you test can transmit, use a dummy load.
