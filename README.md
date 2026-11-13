@@ -12,7 +12,11 @@ a signal generator build for [monome norns](https://monome.org/docs/norns/). If 
 
 ## install
 
-copy this folder to `~/dust/code/signal` on the norns, so that `signal.lua` and `lib/Engine_Signal.sc` are there. You can do that with maiden (the norns's web editor, at `http://norns.local`) or with `scp` / SFTP. Then restart the norns once (a new engine is only found at start-up) and pick `signal` from the script list.
+```
+;install https://github.com/loopmasta/signal
+```
+
+or copy this folder to `~/dust/code/signal` on the norns, so that `signal.lua` and `lib/Engine_Signal.sc` are there. You can do that with maiden (the norns's web editor, at `http://norns.local`) or with `scp` / SFTP. signal brings its own SuperCollider engine (`lib/Engine_Signal.sc`): after installing or updating, **restart norns once** (SYSTEM > RESTART), so SuperCollider picks it up. Then pick `signal` from the script list.
 
 `select.png` is a background for the SELECT preview. Stock norns doesn't show it (it needs a small patch to the norns preview menu, see [shieldXL-trixie](https://github.com/loopmasta/shieldXL-trixie)), so it's optional.
 
